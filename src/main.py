@@ -38,6 +38,9 @@ if __name__=="__main__":
 	Y = np.expand_dims(Y, axis=1)
 	Thetas = np.zeros((X.shape[1],1))
 	
+	print(X.shape)
+	print(Y.shape)
+
 	logistic_regression = LogisticRegression(
 		X = X,
 		Y = Y,
@@ -47,13 +50,9 @@ if __name__=="__main__":
 		Thetas = Thetas
 	)
 
-	X_train, Y_train, X_validate, Y_validate = logistic_regression.split_data(0.5)
-
-	print(len(X_train))
-	print(len(Y_train))
-	print(len(X_validate))
-	print(len(Y_validate))
-	# exit()
+	logistic_regression.split_data()
+	X_train, Y_train = logistic_regression.X_train, logistic_regression.Y_train
+	X_validate, Y_validate = logistic_regression.X_validate, logistic_regression.Y_validate
 
 	loss_train, acc_train = logistic_regression.fit()
 	# loss_validate, acc_validate = logistic_regression.predict()

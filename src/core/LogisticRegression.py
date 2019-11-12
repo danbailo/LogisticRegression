@@ -20,12 +20,12 @@ class LogisticRegression:
 		self.epochs = epochs
 		self.Thetas = Thetas
 
-	def split_data(self, percentage):		
+	def split_data(self):		
 		smaller = min(len(self.Y[self.Y==0]), len(self.Y[self.Y==1]))
 
 		indexes = []
-		self.X_train, self.Y_train = [], []
-		self.X_validate, self.Y_validate = [], []
+		X_train, Y_train = [], []
+		X_validate, Y_validate = [], []
 
 		state = 1
 		while True:
@@ -44,8 +44,12 @@ class LogisticRegression:
 				X_validate.append(self.X[index])
 				Y_validate.append(self.Y[index][0])
 				if len(X_validate) == smaller:
-					state = 3				
+					state = 3
 			else: break
+		X_train, X_validate = np.asarray(X_train), np.asarray(X_validate)
+		Y_train, Y_validate = np.asarray(Y_train), np.asarray(Y_validate)
+		self.X_train, self.Y_train,  = np.insert(X_train, obj=0, values=1, axis=1), np.expand_dims(Y_train, axis=1)
+		self.X_validate, self.Y_validate = np.insert(X_validate, obj=0, values=1, axis=1), np.expand_dims(Y_validate, axis=1)
 
 	def fit(self):
 		loss = []
