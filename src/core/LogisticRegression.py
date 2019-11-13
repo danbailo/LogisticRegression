@@ -12,9 +12,11 @@ plt.rcParams['axes.grid'] = True
 np.random.seed(1)
 
 class LogisticRegression:
-	def __init__(self, X, Y, lr, epochs, activation = "sigmoid", name_fig = None):
-		self.X = X
-		self.Y = Y
+	def __init__(self, lr, epochs, activation = "sigmoid", name_fig = None):
+		# self.X_training = X_training
+		# self.Y_training = Y_training
+		# self.X_validation = X_validation
+		# self.Y_validation = Y_validation
 		self.lr = lr
 		self.epochs = epochs
 		self.activation = activation
@@ -25,46 +27,7 @@ class LogisticRegression:
 		self.__loss_validation = []
 		self.__acc_validation = []
 
-	def split_data(self):		
-		smaller = min(len(self.Y[self.Y==0]), len(self.Y[self.Y==1]))
-		self.img_select = []
-
-		indexes = []
-		X_training, Y_training = [], []
-		X_validation, Y_validation = [], []
-
-		state = 1
-		while True:
-			index = np.random.choice(np.arange(0,len(self.X)))
-			while index in indexes:
-				index = np.random.choice(np.arange(0,len(self.X)))
-			indexes.append(index)
-			if state == 1:
-				X_training.append(self.X[index])
-				Y_training.append(self.Y[index][0])
-				self.img_select.append(self.name_fig[index])
-				if len(X_training) == smaller:
-					state = 2
-			elif state == 2:
-				X_validation.append(self.X[index])
-				Y_validation.append(self.Y[index][0])
-				self.img_select.append(self.name_fig[index])
-				if len(X_validation) == int(smaller*0.5):
-					state = 3
-			else: break
-
-		print(sum(Y_training))
-		print(sum(Y_validation))
-
-		exit()
-
-		X_training, X_validation = np.asarray(X_training), np.asarray(X_validation)
-		Y_training, Y_validation = np.asarray(Y_training), np.asarray(Y_validation)
-
-		X_training, Y_training = np.insert(X_training, obj=0, values=1, axis=1), np.expand_dims(Y_training, axis=1)
-		X_validation, Y_validation = np.insert(X_validation, obj=0, values=1, axis=1), np.expand_dims(Y_validation, axis=1)
-		return X_training, X_validation, Y_training, Y_validation
-
+	#OS DADOS DISPOSTOS, RELACIONADO AS CLASSES, PRECISAM ESTAR BALANCEADOS?
 	def g(self, Z):
 		if self.activation == "sigmoid":
 			return 1 / (1 + np.exp(-Z))
@@ -98,5 +61,4 @@ class LogisticRegression:
 		for _ in trange(self.epochs):
 			self.fit(m_training, X_training, Y_training)
 			self.predict(m_validation, X_validation, Y_validation)
-		print((self.Y_predicted))
 		return self.__loss_training, self.__acc_training, self.__loss_validation, self.__acc_validation

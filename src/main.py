@@ -1,5 +1,5 @@
 from core import LogisticRegression
-from utils import save_img
+from utils import get_data, save_img
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
@@ -8,52 +8,54 @@ import glob
 plt.rcParams['figure.figsize'] = (10, 7)
 plt.rcParams['axes.grid'] = True
 
-if __name__=="__main__":
-	dir_cat = '../data/train/cat/*.png'
-	dir_noncat = '../data/train/noncat/*.png'
+if __name__== "__main__":
+	dir_cat_train = '../data/train/cat/*.png'
+	dir_noncat_train = '../data/train/noncat/*.png'
+
+	dir_cat_validate = '../data/validate/cat/*.png'
+	dir_noncat_validate = '../data/validate/noncat/*.png'
 	
-	X = []
-	Y = []
+	data_cat_train = get_data(dir_cat_train, "cat")
+	data_noncat_train = get_data(dir_noncat_train, "noncat")
 
-	name_fig = []
-	for cat in glob.glob(dir_cat):
-		name_fig.append(cat.split('/')[-1])
-		img = np.asarray(Image.open(cat))
-		img = np.reshape(img, -1)
-		X.append(img)
-		Y.append(1)
+	data_cat_validate = get_data(dir_cat_validate, "cat")	
+	data_noncat_validate = get_data(dir_noncat_validate, "noncat")	
 
-	for noncat in glob.glob(dir_noncat):
-		name_fig.append(noncat.split('/')[-1])
-		img = np.asarray(Image.open(noncat))
-		img = np.reshape(img, -1)
-		X.append(img)
-		Y.append(0) 	
-
-	X = np.asarray(X)
-	Y = np.asarray(Y)
-	lr = 0.00001
-	epochs = 1000
-
-	X = X/255
-	X = np.insert(X, obj=0, values=1, axis=1)
-	Y = np.expand_dims(Y, axis=1)
+	X_training = data_cat_train[0] + data_noncat_train[0]
+	Y_training = data_cat_train[1] + data_noncat_train[1]
 	
-	logistic_regression = LogisticRegression(
-		X = X,
-		Y = Y,
+	X_validation = data_cat_validate[0] + data_noncat_validate[0]
+	Y_validation = data_cat_validate[1] + data_noncat_validate[1]
+
+
+	X_training = np.asarray(X_training)
+	X_validation = np.asarray(X_validation)
+	Y_training = np.asarray(Y_training)
+	Y_validation = np.asarray(Y_validation)
+	lr = 0.000008
+	epochs = 5000
+
+	#normalize data
+	X_training = X_training/255
+	X_validation = X_validation/255
+	
+	X_training = np.insert(X_training, obj=0, values=1, axis=1)
+	X_validation = np.insert(X_validation, obj=0, values=1, axis=1)
+	Y_training = np.expand_dims(Y_training, axis=1)
+	Y_validation = np.expand_dims(Y_validation, axis=1)
+
+	logistic_regression = LogisticRegression(	
 		lr = lr,
 		epochs = epochs,
-		activation = "relu",
-		name_fig = name_fig
+		activation = "sigmoid",
 	)
-
-	X_training, X_validation, Y_training, Y_validation = logistic_regression.split_data()
 
 	loss_training, acc_training, loss_validation, acc_validation =\
 	logistic_regression.train(
-		X_training, X_validation, 
-		Y_training, Y_validation
+		X_training = X_training,
+		Y_training = Y_training,
+		X_validation = X_validation,
+		Y_validation = Y_validation
 	)
 
 	plt.figure()
