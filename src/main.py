@@ -21,7 +21,6 @@ if __name__=="__main__":
 		X.append(img)
 		Y.append(1)
 
-	#-1 multiplica pelo grid(x1,x2,x3) da imagem, "desempacota" e multiplica - 64x64x3 = 12288
 	for noncat in glob.glob(dir_noncat):
 		img = np.asarray(Image.open(noncat))
 		img = np.reshape(img, -1)
@@ -30,7 +29,7 @@ if __name__=="__main__":
 
 	X = np.asarray(X)
 	Y = np.asarray(Y)
-	lr = 0.0001
+	lr = 0.00001
 
 	X = X/255
 	X = np.insert(X, obj=0, values=1, axis=1)
@@ -40,15 +39,15 @@ if __name__=="__main__":
 		X = X,
 		Y = Y,
 		lr = lr,
-		epochs = 10000
+		epochs = 1000,
+		activation = "sigmoid"
 	)
 
 	logistic_regression.split_data()
 	X_training, Y_training = logistic_regression.X_training, logistic_regression.Y_training
 	X_validation, Y_validation = logistic_regression.X_validation, logistic_regression.Y_validation
 
-	loss_training, acc_training = logistic_regression.fit()
-	loss_validation, acc_validation = logistic_regression.predict()
+	loss_training, acc_training, loss_validation, acc_validation = logistic_regression.train()
 
 	plt.figure()
 	plt.plot(loss_training, label="training")
