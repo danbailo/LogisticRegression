@@ -12,12 +12,13 @@ plt.rcParams['axes.grid'] = True
 np.random.seed(1)
 
 class LogisticRegression:
-	def __init__(self, X, Y, lr, epochs, activation = "sigmoid"):
+	def __init__(self, X, Y, lr, epochs, activation = "sigmoid", name_fig = None):
 		self.X = X
 		self.Y = Y
 		self.lr = lr
 		self.epochs = epochs
 		self.activation = activation
+		self.name_fig = name_fig
 
 		self.__loss_training = []
 		self.__acc_training = []
@@ -26,6 +27,7 @@ class LogisticRegression:
 
 	def split_data(self):		
 		smaller = min(len(self.Y[self.Y==0]), len(self.Y[self.Y==1]))
+		self.img_select = []
 
 		indexes = []
 		X_training, Y_training = [], []
@@ -40,14 +42,22 @@ class LogisticRegression:
 			if state == 1:
 				X_training.append(self.X[index])
 				Y_training.append(self.Y[index][0])
+				self.img_select.append(self.name_fig[index])
 				if len(X_training) == smaller:
 					state = 2
 			elif state == 2:
 				X_validation.append(self.X[index])
 				Y_validation.append(self.Y[index][0])
+				self.img_select.append(self.name_fig[index])
 				if len(X_validation) == int(smaller*0.5):
 					state = 3
 			else: break
+
+		print(sum(Y_training))
+		print(sum(Y_validation))
+
+		exit()
+
 		X_training, X_validation = np.asarray(X_training), np.asarray(X_validation)
 		Y_training, Y_validation = np.asarray(Y_training), np.asarray(Y_validation)
 
@@ -77,9 +87,9 @@ class LogisticRegression:
 
 	def predict(self, m, X_validation, Y_validation):
 		Z = X_validation.dot(self.Thetas)
-		Y_predicted = self.g(Z)
-		self.__loss_validation.append(self.cost(Y_predicted, Y_validation, m))
-		self.__acc_validation.append(np.sum((Y_predicted >= 0.5) == Y_validation) / m)		
+		self.Y_predicted = self.g(Z)
+		self.__loss_validation.append(self.cost(self.Y_predicted, Y_validation, m))
+		self.__acc_validation.append(np.sum((self.Y_predicted >= 0.5) == Y_validation) / m)		
 	
 	def train(self, X_training, X_validation, Y_training, Y_validation):
 		self.Thetas = np.zeros((X_training.shape[1],1))
@@ -88,4 +98,5 @@ class LogisticRegression:
 		for _ in trange(self.epochs):
 			self.fit(m_training, X_training, Y_training)
 			self.predict(m_validation, X_validation, Y_validation)
+		print((self.Y_predicted))
 		return self.__loss_training, self.__acc_training, self.__loss_validation, self.__acc_validation
