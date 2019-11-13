@@ -43,11 +43,13 @@ if __name__=="__main__":
 		activation = "sigmoid"
 	)
 
-	logistic_regression.split_data()
-	X_training, Y_training = logistic_regression.X_training, logistic_regression.Y_training
-	X_validation, Y_validation = logistic_regression.X_validation, logistic_regression.Y_validation
+	X_training, X_validation, Y_training, Y_validation = logistic_regression.split_data()
 
-	loss_training, acc_training, loss_validation, acc_validation = logistic_regression.train()
+	loss_training, acc_training, loss_validation, acc_validation =\
+	logistic_regression.train(
+		X_training, X_validation, 
+		Y_training, Y_validation
+	)
 
 	plt.figure()
 	plt.plot(loss_training, label="training")

@@ -50,8 +50,10 @@ class LogisticRegression:
 			else: break
 		X_training, X_validation = np.asarray(X_training), np.asarray(X_validation)
 		Y_training, Y_validation = np.asarray(Y_training), np.asarray(Y_validation)
-		self.X_training, self.Y_training = np.insert(X_training, obj=0, values=1, axis=1), np.expand_dims(Y_training, axis=1)
-		self.X_validation, self.Y_validation = np.insert(X_validation, obj=0, values=1, axis=1), np.expand_dims(Y_validation, axis=1)
+
+		X_training, Y_training = np.insert(X_training, obj=0, values=1, axis=1), np.expand_dims(Y_training, axis=1)
+		X_validation, Y_validation = np.insert(X_validation, obj=0, values=1, axis=1), np.expand_dims(Y_validation, axis=1)
+		return X_training, X_validation, Y_training, Y_validation
 
 	def g(self, Z):
 		if self.activation == "sigmoid":
@@ -61,29 +63,29 @@ class LogisticRegression:
 
 	def cost(self, Y_predicted, Y, m):		
 		if self.activation == "sigmoid":
-			return (1 / m) * np.sum(-Y * np.log(Y_predicted) - (1-Y) * (np.log(1 - Y_predicted)))
+			return (1 / m) * np.sum(-Y * np.log(Y_predicted) - (1 - Y) * (np.log(1 - Y_predicted)))
 		if self.activation == "relu":
-			return np.sqrt(np.mean((Y - Y_predicted)**2))
+			return np.sqrt(np.mean((Y - Y_predicted) ** 2))
 			
-	def fit(self, m):
-		Z = self.X_training.dot(self.Thetas)
+	def fit(self, m, X_training, Y_training):
+		Z = X_training.dot(self.Thetas)
 		Y_predicted = self.g(Z)
-		E = Y_predicted - self.Y_training
-		self.Thetas = self.Thetas - (self.lr * (self.X_training.T.dot(E))) 
-		self.__loss_training.append(self.cost(Y_predicted, self.Y_training, m))
-		self.__acc_training.append(np.sum((Y_predicted >= 0.5) == self.Y_training) / m)
+		E = Y_predicted - Y_training
+		self.Thetas = self.Thetas - (self.lr * (X_training.T.dot(E))) 
+		self.__loss_training.append(self.cost(Y_predicted, Y_training, m))
+		self.__acc_training.append(np.sum((Y_predicted >= 0.5) == Y_training) / m)
 
-	def predict(self, m):
-		Z = self.X_validation.dot(self.Thetas)
+	def predict(self, m, X_validation, Y_validation):
+		Z = X_validation.dot(self.Thetas)
 		Y_predicted = self.g(Z)
-		self.__loss_validation.append(self.cost(Y_predicted, self.Y_validation, m))
-		self.__acc_validation.append(np.sum((Y_predicted >= 0.5) == self.Y_validation) / m)		
+		self.__loss_validation.append(self.cost(Y_predicted, Y_validation, m))
+		self.__acc_validation.append(np.sum((Y_predicted >= 0.5) == Y_validation) / m)		
 	
-	def train(self):
-		self.Thetas = np.zeros((self.X_training.shape[1],1))
-		m_training = self.X_training.shape[0]
-		m_validation = self.X_validation.shape[0]
+	def train(self, X_training, X_validation, Y_training, Y_validation):
+		self.Thetas = np.zeros((X_training.shape[1],1))
+		m_training = X_training.shape[0]
+		m_validation = X_validation.shape[0]
 		for _ in trange(self.epochs):
-			self.fit(m_training)
-			self.predict(m_validation)
+			self.fit(m_training, X_training, Y_training)
+			self.predict(m_validation, X_validation, Y_validation)
 		return self.__loss_training, self.__acc_training, self.__loss_validation, self.__acc_validation
