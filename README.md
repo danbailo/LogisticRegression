@@ -10,4 +10,4 @@
 
 coming soon ...
 
-thanks for all my brother [llpinokio](https://github.com/llpinokio)!
+thanks for everything my brother [llpinokio](https://github.com/llpinokio)!
