@@ -16,7 +16,6 @@ def get_data(directory, class_):
 			Y.append(0)
 	return X, Y
 
-
 def save_img(img_np, file_name, predict):
 	img = Image.fromarray(img_np[:,:,:])
 

@@ -2,72 +2,65 @@ from core import LogisticRegression
 from utils import get_data, save_img
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
-import glob
 
 plt.rcParams['figure.figsize'] = (10, 7)
 plt.rcParams['axes.grid'] = True
 
 if __name__== "__main__":
-	dir_cat_train = '../data/train/cat/*.png'
-	dir_noncat_train = '../data/train/noncat/*.png'
+	dir_cat = '../data/train/cat/*.png'
+	dir_noncat = '../data/train/noncat/*.png'
 
-	dir_cat_validate = '../data/validate/cat/*.png'
-	dir_noncat_validate = '../data/validate/noncat/*.png'
-	
-	data_cat_train = get_data(dir_cat_train, "cat")
-	data_noncat_train = get_data(dir_noncat_train, "noncat")
+	X_cat, Y_cat = get_data(dir_cat, "cat")
+	X_noncat, Y_noncat = get_data(dir_noncat, "noncat")
 
-	data_cat_validate = get_data(dir_cat_validate, "cat")	
-	data_noncat_validate = get_data(dir_noncat_validate, "noncat")	
+	X = X_cat + X_noncat
+	Y = Y_cat + Y_noncat
 
-	X_training = data_cat_train[0] + data_noncat_train[0]
-	Y_training = data_cat_train[1] + data_noncat_train[1]
-	
-	X_validation = data_cat_validate[0] + data_noncat_validate[0]
-	Y_validation = data_cat_validate[1] + data_noncat_validate[1]
-
-
-	X_training = np.asarray(X_training)
-	X_validation = np.asarray(X_validation)
-	Y_training = np.asarray(Y_training)
-	Y_validation = np.asarray(Y_validation)
-	lr = 0.000008
-	epochs = 5000
+	X = np.asarray(X)
+	Y = np.asarray(Y)
+	lr = 0.00001
+	epochs = 3000
 
 	#normalize data
-	X_training = X_training/255
-	X_validation = X_validation/255
+	X = X/255
 	
-	X_training = np.insert(X_training, obj=0, values=1, axis=1)
-	X_validation = np.insert(X_validation, obj=0, values=1, axis=1)
-	Y_training = np.expand_dims(Y_training, axis=1)
-	Y_validation = np.expand_dims(Y_validation, axis=1)
+	X = np.insert(X, obj=0, values=1, axis=1)
+	Y = np.expand_dims(Y, axis=1)
+
+	print(X.shape)
+	print(Y.shape)
 
 	logistic_regression = LogisticRegression(	
 		lr = lr,
 		epochs = epochs,
 		activation = "sigmoid",
 	)
+	X_train, X_validate, Y_train, Y_validate = logistic_regression.split_data(X, Y, 0.4)
 
-	loss_training, acc_training, loss_validation, acc_validation =\
+	print(len(X_train))
+	print(len(X_validate))
+
+	print(len(Y_train))
+	print(len(Y_validate))
+
+	loss_train, acc_train, loss_validate, acc_validate =\
 	logistic_regression.train(
-		X_training = X_training,
-		Y_training = Y_training,
-		X_validation = X_validation,
-		Y_validation = Y_validation
+		X_train = X_train,
+		Y_train = Y_train,
+		X_validate = X_validate,
+		Y_validate = Y_validate
 	)
 
 	plt.figure()
-	plt.plot(loss_training, label="training")
-	plt.plot(loss_validation, label="validation")
+	plt.plot(loss_train, label="train")
+	plt.plot(loss_validate, label="validate")
 	plt.xlabel('epochs')
 	plt.ylabel(r'J($\theta$)')	
 	plt.legend()
 
 	plt.figure()
-	plt.plot(acc_training, label="training")
-	plt.plot(acc_validation, label="validation")
+	plt.plot(acc_train, label="train")
+	plt.plot(acc_validate, label="validate")
 	plt.yticks(np.arange(0.0, 1.1, 0.1))
 	plt.xlabel('epochs')
 	plt.ylabel(r'acc')		
