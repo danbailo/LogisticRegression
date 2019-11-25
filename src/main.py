@@ -35,7 +35,7 @@ if __name__== "__main__":
 		epochs = epochs,
 		activation = "sigmoid",
 	)
-	X_train, X_validate, Y_train, Y_validate = logistic_regression.split_data(X, Y, 0.4)
+	X_train, X_validate, Y_train, Y_validate = logistic_regression.split_data(X, Y, 0.2)
 
 	print(len(X_train))
 	print(len(X_validate))

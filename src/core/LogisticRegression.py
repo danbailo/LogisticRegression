@@ -36,8 +36,8 @@ class LogisticRegression:
 		#PORQUE MELHOR CASO EU EMBARALHE OS DADOS?
 		random.shuffle(values)
 
-		for i,j in values:
-			print(i[:3],j)
+		# for i,j in values:
+		# 	print(i[:3],j)
 
 		data = {key:values[key] for key in range(len(values))}
 
