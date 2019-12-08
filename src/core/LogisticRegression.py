@@ -21,9 +21,9 @@ class LogisticRegression:
 		self.__loss_validate = []
 		self.__acc_validate = []
 
-	#OS DADOS DISPOSTOS, RELACIONADO AS CLASSES, PRECISAM ESTAR BALANCEADOS?
 	def split_data(self, X, Y, ratio):
 		smaller = min(len(Y[Y==0]), len(Y[Y==1]))
+
 		ratio_data = int(smaller*ratio)
 		X_train = []
 		Y_train = []
@@ -33,11 +33,7 @@ class LogisticRegression:
 
 		values = list(zip(X, Y))
 
-		#PORQUE MELHOR CASO EU EMBARALHE OS DADOS?
 		random.shuffle(values)
-
-		# for i,j in values:
-		# 	print(i[:3],j)
 
 		data = {key:values[key] for key in range(len(values))}
 
@@ -95,9 +91,9 @@ class LogisticRegression:
 
 	def predict(self, m, X_validate, Y_validate):
 		Z = X_validate.dot(self.Thetas)
-		self.Y_predicted = self.g(Z)
-		self.__loss_validate.append(self.cost(self.Y_predicted, Y_validate, m))
-		self.__acc_validate.append(np.sum((self.Y_predicted >= 0.5) == Y_validate) / m)		
+		Y_predicted = self.g(Z)
+		self.__loss_validate.append(self.cost(Y_predicted, Y_validate, m))
+		self.__acc_validate.append(np.sum((Y_predicted >= 0.5) == Y_validate) / m)		
 	
 	def train(self, X_train, X_validate, Y_train, Y_validate):
 		self.Thetas = np.zeros((X_train.shape[1],1))

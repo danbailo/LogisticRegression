@@ -19,7 +19,7 @@ if __name__== "__main__":
 	X = np.asarray(X)
 	Y = np.asarray(Y)
 	lr = 0.00001
-	epochs = 3000
+	epochs = 5000
 
 	#normalize data
 	X = X/255
@@ -27,21 +27,12 @@ if __name__== "__main__":
 	X = np.insert(X, obj=0, values=1, axis=1)
 	Y = np.expand_dims(Y, axis=1)
 
-	print(X.shape)
-	print(Y.shape)
-
 	logistic_regression = LogisticRegression(	
 		lr = lr,
 		epochs = epochs,
 		activation = "sigmoid",
 	)
-	X_train, X_validate, Y_train, Y_validate = logistic_regression.split_data(X, Y, 0.2)
-
-	print(len(X_train))
-	print(len(X_validate))
-
-	print(len(Y_train))
-	print(len(Y_validate))
+	X_train, X_validate, Y_train, Y_validate = logistic_regression.split_data(X, Y, 0.7)
 
 	loss_train, acc_train, loss_validate, acc_validate =\
 	logistic_regression.train(
